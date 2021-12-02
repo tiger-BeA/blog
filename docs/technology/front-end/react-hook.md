@@ -41,7 +41,7 @@ Fiber 是 react16 中的协调引擎，主要目的是使 virtual dom 可以进�
 
 #### API 示例
 
-```react
+```tsx
 const themes = {
   light: {
     foreground: "#000000",
@@ -95,7 +95,7 @@ function ThemedButton() {
 
 #### API 示例
 
-```react
+```tsx
 useEffect(() => {
   const subscription = props.source.subscribe();
   return () => {
@@ -139,7 +139,7 @@ useEffect 传的的 callback 返回的函数，在 fiber 的清理阶段会执�
 
 见如下代码，demo 希望利用 [] 依赖，将 useEffect 当做 didMount 使用，再结合 setInterval 达到每秒 count 的值自增 1 的效果
 
-```react
+```tsx
 function Counter() {
   const [count, setCount] = useState(0);
 
@@ -164,7 +164,7 @@ function Counter() {
 
 最简单的方法是用 useState 的第二种赋值方法，用回调函数进行赋值
 
-```react
+```tsx
 function Counter() {
   const [count, setCount] = useState(0);
 
@@ -191,7 +191,7 @@ function Counter() {
 
 如果需要同时对 count 和 step 两个变量做累加时，那 useEffect 的依赖必然要写上其中某种值，故而频繁实例化的问题就又出现了
 
-```react
+```tsx
 function Counter() {
   const [count, setCount] = useState(0);
   const [step, setStep] = useState(0);
@@ -215,7 +215,7 @@ function Counter() {
 
 #### API 示例
 
-```react
+```tsx
 function Counter() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { count, step } = state;
@@ -255,7 +255,7 @@ function reducer(state, action) {
 
 如上例子引发一个注意项，为了避免遗漏依赖，必须将函数写在 useEffect 内部，这样  [eslint-plugin-react-hooks](https://www.npmjs.com/package/eslint-plugin-react-hooks) 才能通过静态分析补齐依赖项，这就引发了新问题，所有函数写在 useEffect 内部显得非常难以维护
 
-```react
+```tsx
 function Counter() {
   const [count, setCount] = useState(0);
 
@@ -282,7 +282,7 @@ function Counter() {
 
 #### API 示例
 
-```react
+```tsx
 function Counter() {
   const [count, setCount] = useState(0);
 
@@ -312,7 +312,7 @@ function Counter() {
 
 见如下例子，class 组件实现参数变化时重新执行函数
 
-```react
+```tsx
 class Parent extends Component {
   state = {
     count: 0,
@@ -355,7 +355,7 @@ class Child extends Component {
 
 换成 function + useCallback 则会十分简单：
 
-```react
+```tsx
 function Parent() {
   const [ count, setCount ] = useState(0);
   const [ step, setStep ] = useState(0);
@@ -388,7 +388,7 @@ function Child(props) {
 
 可以用自定义 Hooks 实现，如下，将上述例子的 fetchData 函数抽离到整个组件外部
 
-```react
+```tsx
 function useFetch(count, step) {
   return useCallback(() => {
     const url = "https://v/search?query=" + count + "&step=" + step;
@@ -417,7 +417,7 @@ function Parent() {
 
 观察可以发现，count 和 step 都会频繁变化，导致 useFetch 中 useCallback 依赖的变化，进而导致重新生成函数，然而这个函数没必要每次都重新生成，换个频繁切换的例子观察一下性能损耗有多大
 
-```react
+```tsx
 function useDraggable(dom, count, step) {
   return useCallback(() => {
     // 上报日志
@@ -447,7 +447,7 @@ function Parent(props) {
 
 #### API 示例
 
-```react
+```tsx
 function useFetch(count, step) {
   const countRef = useRef(count);
   const stepRef = useRef(step);
@@ -470,7 +470,7 @@ function useFetch(count, step) {
 
 课利用 useRef 创造一个自定义 hook 代替 useCallback，使其 deps 变化时回调不会重新执行，但却能拿到最新值
 
-```react
+```tsx
 function useEventCallback(fn, dependencies) {
   const ref = useRef(null);
 
@@ -503,7 +503,7 @@ function useEventCallback(fn, dependencies) {
   - 见如下代码（始终能拿到 state 最新值），state 是 immutable 的（setState 后一定会生成一个全新的 state 引用，故而每次`setTimeout`都读取了当前渲染闭包环境的数据，虽然新的值跟着最新的渲染变了，但旧的渲染中状态仍然是旧值），ref 是 mutable 的
   - 通过 useRef 创建的对象，其值只有一份，且在每次的 render 中都共享
 
-```react
+```tsx
 function App() {
   const [count, setCount] = useState(0);
   const countRef = useRef(count);
@@ -538,7 +538,7 @@ function App() {
 
 用 useMemo 包裹渲染代码，这样就算 Child 因为 props 变动而 re-render 了，只要 useMemo 的 deps 中声明的参数 props.fetchData 经过浅对比后发现相等，就不会 re-render 渲染函数
 
-```react
+```tsx
 const Child = (props) => {
   useEffect(() => {
     props.fetchData()
@@ -554,7 +554,7 @@ const Child = (props) => {
 
 ##### memo + useContext 做 function 组件间共享参数 / 函数
 
-```react
+```tsx
 // 这样就不需要在每个函数间进行参数透传了，公共函数可以都放在 Context 里
 const Store = createContext(null);
 
@@ -586,7 +586,7 @@ const Child = memo((props) => {
 
 但当函数多了之后，provider 的 value 会非常臃肿，故而启用 useReducer 为 context 传递的内容进行瘦身
 
-```react
+```tsx
 const Store = createContext(null);
 
 // 所有回调函数都通过调用 dispatch 完成，则 provider 仅需传递 dispatch 一个函数
@@ -627,7 +627,7 @@ function reducer(state, action) {
 
 既然赋值的 dispatch 函数能共享，那么把 state 也放到 provider 的 value 里，赋值和读取岂不是变得更简单了？但 **state 放到 context 中会存在潜在性能问题！！ **
 
-```react
+```tsx
 const Store = createContext(null);
 
 function Parent() {
@@ -674,7 +674,7 @@ function reducer(state, action) {
 
 如果组件使用了 useContext，且不使用 props，就可以完全使用 useMemo 来做性能优化
 
-```react
+```tsx
 const Store = createContext(null);
 
 function Parent() {
@@ -750,7 +750,7 @@ function reducer(state, action) {
 
 只要函数名遵循以 `use`开头，且返回非 JSX 元素，就可以创建自定义的 hooks。自定义 hooks 内还可以调用包括内置 hooks 在内的所有自定义 hooks，如下：
 
-```react
+```tsx
 function useCurrentValue(value) {
   const ref = useRef(0)l
   useEffect(() => {
@@ -784,7 +784,7 @@ function Counter() {
 
 举例：异步从接口里获取数据，最佳的做法是封装成一个自定义 hook
 
-```react
+```tsx
 const useDataApi<T> = (initialUrl: string, initialData: T) => {
   const [url, setUrl] = useState(initialUrl);
 
@@ -833,7 +833,7 @@ const useDataApi<T> = (initialUrl: string, initialData: T) => {
 
 在组件中使用非常方便
 
-```react
+```tsx
 function App() {
   const { data, isLoading, isError } = useDataApi("https://v", {
     showLog: true
@@ -843,7 +843,7 @@ function App() {
 
 如果这个值需要存储到数据流，在所有组件之间共享，可以结合 useEffect 和 useReducer
 
-```react
+```tsx
 function App(props) {
   const { dispatch } = useContext(Store);
 
@@ -866,7 +866,7 @@ function App(props) {
 
 先举个例子，用 es6 特性给参数定义阶段赋值
 
-```react
+```tsx
 // 每次父组件刷新时，Child 组件跟着刷新，看起来 log 只会打印一次，实际每次渲染都会打印 log，证明 type 每次的引用都是不同的
 const Child = memo(({ type = { a: 1 } }) => {
   useEffect(() => {
@@ -881,7 +881,7 @@ const Child = memo(({ type = { a: 1 } }) => {
 
 ### 使用 React 内置方案
 
-```react
+```tsx
 // 不断刷新父组件，只会打印一次 log
 const Child = ({ type }) => {
   useEffect(() => {
@@ -902,7 +902,7 @@ Child.defaultProps = {
 
 ### 父组件传对象给子组件导致的问题
 
-```react
+```tsx
 // 做一个点击累加的按钮作为父组件，那么父组件每次点击后都会刷新
 function Parent() {
   const [count, forceUpdate] = useState(0);
@@ -931,7 +931,7 @@ const Child = memo(props => {
 
 解法一：改写子组件的依赖
 
-```react
+```tsx
 const Child = memo(props => {
   useEffect(() => {
     console.log("schema", props.schema);
@@ -944,7 +944,7 @@ const Child = memo(props => {
 
 解法二：ref 优化父组件传值
 
-```react
+```tsx
 function Parent() {
   const [count, forceUpdate] = useState(0);
 

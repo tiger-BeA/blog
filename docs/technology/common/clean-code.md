@@ -206,7 +206,7 @@ title: Clean Code
 
 - 参数列表
 
-```c++
+```c
   // bad
   String.format('%s worked %.2f hours.', name, hours);
   
