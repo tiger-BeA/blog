@@ -2,7 +2,7 @@ module.exports = {
   theme: "antdocs",
   title: "tiger BeA",
   description: "个人笔记",
-  base: "/",
+  base: "/blog/",
   head: [
     ["link", { rel: "icon", href: "/assets/logo.svg" }]
   ],
