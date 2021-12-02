@@ -6,6 +6,9 @@ module.exports = {
   head: [
     ["link", { rel: "icon", href: "/assets/logo.svg" }]
   ],
+  locales: {
+    '/': { lang: 'zh-CN' }
+  },
   markdown: {
     lineNumbers: false,
   },
